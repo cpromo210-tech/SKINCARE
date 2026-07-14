@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skincare</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12100e; --surf:#1c1917; --surf2:#252220; --line:#2f2b28; --line2:#3d3833;
+    --txt:#f0e9e0; --mid:#a89c8f; --dim:#6b6157;
+    --amber:#d9a05b; --rose:#c9756a; --plum:#9b7bb8; --moss:#7d9a72; --gold:#e0b96a;
+    --red:#c85a4e;
+    --am:#d9a05b; --pm:#7b8fc4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--txt);font-family:'DM Mono',monospace;font-size:15px;min-height:100vh;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+  header{padding:26px 16px 18px;max-width:640px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end}
+  header h1{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:300;letter-spacing:.02em}
+  header .d{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);text-align:right;line-height:1.7}
+
+  nav{position:sticky;top:0;z-index:60;background:rgba(18,16,14,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .navin{max-width:640px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;padding:0 8px}
+  .navin::-webkit-scrollbar{display:none}
+  nav button{flex:1;min-width:66px;background:none;border:none;font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:14px 4px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+  nav button.on{color:var(--txt);border-bottom-color:var(--amber)}
+
+  .panel{display:none}
+  .panel.on{display:block;animation:f .25s ease}
+  @keyframes f{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  /* HERO */
+  .hero{border-radius:14px;padding:20px;margin:18px 0 14px;position:relative;overflow:hidden;border:1px solid var(--line2)}
+  .hero.tret{background:linear-gradient(140deg,#2e2338,#3d2f4a);border-color:#5b4670}
+  .hero.stamp{background:linear-gradient(140deg,#3a2420,#4d2f28);border-color:#6b4238}
+  .hero.plain{background:linear-gradient(140deg,#1f1c19,#2a2520);border-color:var(--line2)}
+  .hero .eb{font-size:.5rem;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+  .hero h2{font-family:'Fraunces',serif;font-size:1.65rem;font-weight:500;line-height:1.15}
+  .hero .sb{font-size:.66rem;color:var(--mid);margin-top:8px;line-height:1.7;max-width:78%}
+  .ring{position:absolute;right:18px;top:20px}
+
+  /* FLAGS */
+  .flags{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+  .flag{border-radius:8px;padding:9px 12px;font-size:.62rem;line-height:1.65;display:flex;gap:9px;background:var(--surf);border-left:2px solid}
+  .flag.warn{border-color:var(--amber);color:#e2c193}
+  .flag.rx{border-color:var(--plum);color:#c5a9dc}
+  .flag.info{border-color:var(--moss);color:#a7bd9d}
+  .flag.buy{border-color:var(--red);color:#dd9a91}
+  .flag b{font-weight:500;color:var(--txt)}
+  .flag .ic{flex-shrink:0;opacity:.8}
+
+  /* SEGMENT */
+  .seg{display:flex;gap:6px;margin-bottom:12px}
+  .seg button{flex:1;background:var(--surf);border:1px solid var(--line);border-radius:8px;padding:10px;font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--surf2);color:var(--txt);border-color:var(--line2)}
+  .seg button.on.am{border-color:var(--am);color:var(--am)}
+  .seg button.on.pm{border-color:var(--pm);color:var(--pm)}
+
+  /* STEPS */
+  .steps{display:flex;flex-direction:column;gap:7px}
+  .step{background:var(--surf);border:1px solid var(--line);border-radius:11px;padding:13px 14px;display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;cursor:pointer;transition:.12s}
+  .step:hover{border-color:var(--line2)}
+  .step:active{transform:scale(.995)}
+  .step.done{background:#1a2018;border-color:#38452f}
+  .step.done .sn{color:var(--moss);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:#4a5c40}
+  .step.off{opacity:.42;cursor:default}
+  .step.off:hover{border-color:var(--line)}
+  .chk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:transparent;flex-shrink:0;transition:.12s}
+  .step.done .chk{background:var(--moss);border-color:var(--moss);color:#12100e}
+  .step.off .chk{border-style:dashed}
+  .sn{font-family:'Fraunces',serif;font-size:1.02rem;font-weight:500;line-height:1.25}
+  .sp{font-size:.53rem;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+  .st{font-size:.6rem;color:var(--mid);margin-top:5px;line-height:1.65}
+  .st.cau{background:#2a201a;border-left:2px solid var(--amber);padding:6px 9px;border-radius:0 5px 5px 0;color:#dcb489;margin-top:6px}
+  .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+  .tag{font-size:.46rem;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:20px;border:1px solid}
+  .tag.rx{color:var(--plum);border-color:var(--plum)}
+  .tag.brow{color:var(--moss);border-color:var(--moss)}
+  .tag.low{color:var(--amber);border-color:var(--amber)}
+  .tag.want{color:var(--red);border-color:var(--red)}
+  .tag.out{color:var(--red);border-color:var(--red);background:rgba(200,90,78,.12)}
+
+  /* CARDS */
+  .card{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:11px}
+  .card h3{font-family:'Fraunces',serif;font-size:1.12rem;font-weight:500}
+  .card .cs{font-size:.53rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:3px 0 12px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 12px}
+  .stat{background:var(--surf);border:1px solid var(--line);border-radius:11px;padding:14px 8px;text-align:center}
+  .stat .v{font-family:'Fraunces',serif;font-size:1.75rem;font-weight:500;color:var(--amber);line-height:1}
+  .stat .l{font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:5px}
+
+  /* HEATMAP */
+  .heat{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .hl{font-size:.44rem;text-align:center;color:var(--dim);letter-spacing:.06em;padding-bottom:3px}
+  .hc{aspect-ratio:1;border-radius:4px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:.48rem;color:var(--dim);border:1px solid transparent}
+  .hc.full{background:var(--moss);color:#12100e;font-weight:500}
+  .hc.part{background:var(--gold);color:#12100e}
+  .hc.none{background:#3a2f2c;color:#8a7268}
+  .hc.fut{background:#191715;color:#3a3531}
+  .hc.now{border-color:var(--txt)}
+  .legend{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .lg{display:flex;align-items:center;gap:5px;font-size:.5rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+  .lgd{width:9px;height:9px;border-radius:2px}
+
+  /* RATE */
+  .rate{display:flex;gap:6px}
+  .rate button{flex:1;background:var(--surf2);border:1px solid var(--line);border-radius:8px;padding:12px 0;font-family:'DM Mono',monospace;font-size:.9rem;color:var(--mid);cursor:pointer;transition:.12s}
+  .rate button.on{background:var(--rose);color:#12100e;border-color:var(--rose);font-weight:500}
+  .rlb{display:flex;justify-content:space-between;font-size:.46rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+
+  /* INVENTORY */
+  .filt{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .filt::-webkit-scrollbar{display:none}
+  .filt button{background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:7px 13px;font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);cursor:pointer;white-space:nowrap}
+  .filt button.on{background:var(--surf2);color:var(--txt);border-color:var(--line2)}
+
+  .prod{background:var(--surf);border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-bottom:7px;border-left:2px solid var(--line2)}
+  .prod.own{border-left-color:var(--moss)}
+  .prod.want{border-left-color:var(--red)}
+  .prod.out{border-left-color:var(--amber)}
+  .prow{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .pn{font-size:.78rem;font-weight:500;line-height:1.35}
+  .pb{font-size:.55rem;color:var(--amber);letter-spacing:.06em;margin-top:2px}
+  .pm2{font-size:.55rem;color:var(--dim);margin-top:5px;line-height:1.6}
+  .pctl{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+  .pbtn{background:var(--surf2);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);cursor:pointer;transition:.12s}
+  .pbtn:hover{border-color:var(--line2);color:var(--mid)}
+  .pbtn.act{background:var(--moss);color:#12100e;border-color:var(--moss)}
+  .pbtn.act.r{background:var(--red);color:#fff;border-color:var(--red)}
+  .pbtn.act.a{background:var(--amber);color:#12100e;border-color:var(--amber)}
+  .pbtn a{color:inherit;text-decoration:none}
+  .dleft{font-size:.6rem;white-space:nowrap;flex-shrink:0;color:var(--moss)}
+  .dleft.lo{color:var(--amber)}
+  .dleft.out{color:var(--red)}
+  .dleft.un{color:var(--dim)}
+
+  .bar{height:4px;background:var(--surf2);border-radius:2px;overflow:hidden;margin-top:8px}
+  .barf{height:100%;border-radius:2px;transition:width .3s}
+
+  /* PHOTOS */
+  .pg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .ps{aspect-ratio:3/4;border:1.5px dashed var(--line2);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;background:var(--surf2)}
+  .ps img{width:100%;height:100%;object-fit:cover}
+  .ps .pl{font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+  .ps .pp{font-size:1.2rem;color:var(--line2)}
+  .ps.has{border-style:solid;border-color:var(--moss)}
+  .mn{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .mn button{background:var(--surf2);border:1px solid var(--line);border-radius:6px;width:30px;height:30px;color:var(--mid);cursor:pointer}
+  .mn span{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
+
+  /* MISC */
+  .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.6rem}
+  .row:last-child{border-bottom:none}
+  .rd{color:var(--dim);width:60px;flex-shrink:0}
+  .rb{flex:1;height:6px;background:var(--surf2);border-radius:3px;overflow:hidden}
+  .rf{height:100%;border-radius:3px}
+  .rt{font-size:.48rem;color:var(--dim);flex-shrink:0;text-transform:uppercase;letter-spacing:.08em}
+
+  .lbl{font-size:.53rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin:20px 0 9px}
+  .empty{font-size:.62rem;color:var(--dim);text-align:center;padding:20px 10px;line-height:1.8}
+  .note{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:.6rem;line-height:1.75;color:var(--mid);margin-bottom:7px}
+  .note strong{display:block;font-family:'Fraunces',serif;font-size:.92rem;color:var(--txt);margin-bottom:4px;font-weight:500}
+  .note b{color:var(--txt);font-weight:500}
+
+  /* WEEK STRIP */
+  .wknav{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+  .wknav button{background:var(--surf);border:1px solid var(--line);border-radius:7px;width:32px;height:32px;color:var(--mid);cursor:pointer;font-size:.8rem}
+  .wknav button:hover{border-color:var(--line2);color:var(--txt)}
+  .wknav .wl{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);text-align:center}
+  .wknav .wl b{color:var(--txt);font-weight:500;display:block;font-size:.62rem;margin-bottom:2px}
+  .wkback{background:none;border:none;font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);cursor:pointer;padding:0;margin-top:3px}
+
+  .daytabs{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:14px}
+  .dt{background:var(--surf);border:1px solid var(--line);border-radius:9px;padding:9px 2px 8px;text-align:center;cursor:pointer;transition:.12s;position:relative;overflow:hidden}
+  .dt:hover{border-color:var(--line2)}
+  .dt .dd{font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+  .dt .dn{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;line-height:1;color:var(--mid)}
+  .dt .dm{height:3px;border-radius:2px;margin-top:6px;background:var(--line2)}
+  .dt.tret .dm{background:var(--plum)}
+  .dt.stamp .dm{background:var(--rose)}
+  .dt.plain .dm{background:var(--line2)}
+  .dt.sel{background:var(--surf2);border-color:var(--txt)}
+  .dt.sel .dn{color:var(--txt)}
+  .dt.sel .dd{color:var(--mid)}
+  .dt.now .dd{color:var(--amber)}
+  .dt.fut{opacity:.45}
+  .dt .ck{position:absolute;top:3px;right:4px;font-size:.5rem;line-height:1}
+  .dt .ck.full{color:var(--moss)}
+  .dt .ck.part{color:var(--gold)}
+  .wkkey{display:flex;gap:11px;flex-wrap:wrap;margin:-6px 0 14px}
+  .wkk{display:flex;align-items:center;gap:5px;font-size:.48rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+  .wkkd{width:14px;height:3px;border-radius:2px}
+  .fut-note{background:var(--surf);border:1px solid var(--line);border-left:2px solid var(--dim);border-radius:8px;padding:9px 12px;font-size:.6rem;color:var(--dim);line-height:1.6;margin-bottom:10px}
+  input[type=file]{display:none}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(150%);background:var(--txt);color:var(--bg);font-size:.6rem;letter-spacing:.08em;padding:11px 20px;border-radius:100px;z-index:99;transition:transform .28s;font-weight:500}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  footer{text-align:center;padding:30px 16px 0;font-size:.48rem;color:var(--dim);letter-spacing:.16em;line-height:2.2;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Skincare</h1>
+  <div class="d" id="hd">—</div>
+</header>
+
+<nav><div class="navin">
+  <button class="on" data-t="week">Week</button>
+  <button data-t="streak">Streak</button>
+  <button data-t="skin">Skin</button>
+  <button data-t="shelf">Shelf</button>
+  <button data-t="photos">Photos</button>
+  <button data-t="ref">Rules</button>
+</div></nav>
+
+<div class="wrap">
+  <div class="panel on" id="week"></div>
+  <div class="panel" id="streak"></div>
+  <div class="panel" id="skin"></div>
+  <div class="panel" id="shelf"></div>
+  <div class="panel" id="photos"></div>
+  <div class="panel" id="ref"></div>
+</div>
+
+<input type="file" id="pf" accept="image/*">
+<div class="toast" id="toast"></div>
+<footer>Thin → thick · water → oil · actives before barrier<br>Tretinoin is your only retinoid</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   SKINCARE v2
+   Every product has a state: own / want / out
+   Routine renders only what you OWN. Want-items show as ghosts.
+   Schedule: tret Tue+Fri · stamp Sun · minox 2x paused 24hr round stamp
+   ═══════════════════════════════════════════════════════════ */
+const V='skinv2';
+const BROW_START='2026-06-01';
+const load=(k,d)=>{try{const r=localStorage.getItem(V+'_'+k);return r?JSON.parse(r):d;}catch(e){return d;}};
+const save=(k,v)=>{try{localStorage.setItem(V+'_'+k,JSON.stringify(v));return true;}catch(e){return false;}};
+
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const mkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1);
+const TODAY=new Date(), TKEY=key(TODAY), DOW=TODAY.getDay();
+const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+/* ── PRODUCT CATALOG ──
+   id, name, brand, slot(am/pm/both/weekly), state(own/want/out),
+   life = days per unit, korean, opened, buy = where, why = one line
+*/
+const CATALOG=[
+  // AM
+  {id:'rice',   n:'Rice Water Rinse',        b:'DIY',                          slot:'am', pos:1,  life:0,   kr:false, why:'Gentle enough to skip a full AM cleanser. Brightens without stripping.', buy:''},
+  {id:'toner',  n:'Toner',                   b:'Tirtir',                       slot:'both',pos:2, life:90,  kr:true,  why:'Pat on damp skin. Preps skin to absorb serums.', buy:'YesStyle'},
+  {id:'vitc',   n:'Vitamin C Serum',         b:'Medicube',                     slot:'am', pos:3,  life:60,  kr:true,  why:'AM only. Antioxidant defense that pairs directly with your SPF.', buy:'YesStyle'},
+  {id:'ha',     n:'Hyaluronic Acid Serum',   b:'Isntree',                      slot:'am', pos:4,  life:90,  kr:true,  why:'Onto still-damp skin, right after Vit C. Seals water in before it evaporates.', buy:'YesStyle'},
+  {id:'rejuran',n:'Rejuran Turnover Ampoule',b:'Rejuran · 2–3× per week',      slot:'am', pos:5,  life:60,  kr:true,  why:'PN salmon DNA. Goes after HA, before moisturizer. Pick AM or PM and stay consistent — AM is the simpler slot since tret owns your nights.', buy:'YesStyle / Olive Young'},
+  {id:'eye',    n:'Eye Cream',               b:'Vegan Collagen Eye C + Ginzing',slot:'both',pos:6,life:90,  kr:false, why:'Pat with the ring finger around the orbital bone. Goes before barrier cream. Covers the zone you deliberately keep tret away from.', buy:'Amazon / Origins'},
+  {id:'barrier',n:'Barrier Cream',           b:'Astura',                       slot:'both',pos:7, life:75,  kr:false, why:'Locks everything in. Heavier than SPF so it always goes under it.', buy:'Amazon'},
+  {id:'spf',    n:'SPF — final step',        b:'DRMTLGY Tinted SPF 46',        slot:'am', pos:8,  life:60,  kr:false, why:'Nothing goes over SPF. Reapply every 2 hrs outdoors.', buy:'Amazon'},
+  {id:'minoxam',n:'Minoxidil',               b:'Brows · dose 1 of 2',          slot:'am', pos:9,  life:30,  kr:false, why:'Light, targeted, brow area only. Consistency beats volume — a small dose daily beats a big dose sometimes.', buy:'Amazon', brow:true},
+  // PM
+  {id:'balm',   n:'Oil Cleanse',             b:'Tirtir Cleansing Balm',        slot:'pm', pos:1,  life:90,  kr:true,  why:'Dry face. Massage to dissolve SPF and sebum. Emulsify with water, rinse.', buy:'YesStyle'},
+  {id:'cleanse',n:'Water Cleanser',          b:'Naturium Niacinamide',         slot:'pm', pos:2,  life:90,  kr:false, why:'Second cleanse after the balm. Clears residue without stripping.', buy:'Target / Amazon'},
+  {id:'pads',   n:'Exfoliating Pads',        b:'Medicube · 2–3× per week',     slot:'pm', pos:3,  life:70,  kr:true,  why:'Off on any night with actives. Dermatica already carries three.', buy:'YesStyle'},
+  {id:'snail',  n:'Snail Mucin Essence',     b:'Dual Essence',                 slot:'pm', pos:5,  life:75,  kr:true,  why:'Lightweight buffer before the heavy serums. Cushions irritation on Dermatica nights.', buy:'Amazon ~$20'},
+  {id:'anr',    n:'Advanced Repair Serum',   b:'Estée Lauder ANR',             slot:'pm', pos:6,  life:120, kr:false, why:'Treatment base before tret. A few drops, pat in, let it absorb 1–2 min.', buy:'Sephora / Ulta'},
+  {id:'tret',   n:'Dermatica — Tretinoin',   b:'Tret + Azelaic + Tranexamic',  slot:'pm', pos:7,  life:60,  kr:false, why:'Pea-size. All three actives in one step. Wait 10–15 min before moisturizer. Keep it off the orbital bone.', buy:'Dermatica Rx', rx:true},
+  {id:'stamp',  n:'Derma Stamp 0.5mm',       b:'Brows · Sunday only',          slot:'pm', pos:7,  life:180, kr:false, why:'Disinfect with 70% iso, let it dry fully. Brow area only. Never on a tret night.', buy:'Amazon', brow:true},
+  {id:'minoxpm',n:'Minoxidil',               b:'Brows · dose 2 of 2',          slot:'pm', pos:10, life:30,  kr:false, why:'Light, targeted. Keep it away from the rest of the face.', buy:'Amazon', brow:true},
+  // WEEKLY MASKS — Biodance rainbow
+  {id:'bio_white', n:'Bio-Collagen Mask',      b:'Biodance · White · original', slot:'weekly', pos:1, life:60, kr:true, why:'The viral one. Ultra-low molecular collagen + Galactomyces. Hydration, pore tightening, elasticity. Wear 3–4 hrs or overnight — it turns clear when it is done.', buy:'Amazon / Costco 24pk', mask:'#e8e0d4'},
+  {id:'bio_yellow',n:'Radiant Vita Niacinamide',b:'Biodance · Yellow',          slot:'weekly', pos:2, life:60, kr:true, why:'Niacinamide + glutathione. Fades dark spots and dullness. This is the one that stacks with your tranexamic acid on pigment.', buy:'Amazon / Sephora', mask:'#e0b96a'},
+  {id:'bio_purple',n:'Rejuvenating Caviar PDRN',b:'Biodance · Purple',          slot:'weekly', pos:3, life:60, kr:true, why:'Salmon PDRN + caviar. Regeneration and barrier repair. The best pick for the night after a tret flare.', buy:'Amazon / Sephora', mask:'#9b7bb8'},
+  {id:'bio_green', n:'Hydro Cera-nol',          b:'Biodance · Green',           slot:'weekly', pos:4, life:60, kr:true, why:'Ceramides + D-panthenol. Soothes and repairs irritated or sun-stressed skin. Your barrier-rescue mask.', buy:'Amazon', mask:'#7d9a72'},
+  {id:'bio_blue',  n:'Refreshing Sea Kelp',     b:'Biodance · Blue',            slot:'weekly', pos:5, life:60, kr:true, why:'Balances sebum without stripping. For oily weeks — least relevant to you unless you are breaking out.', buy:'Amazon', mask:'#7b8fc4'},
+];
+
+/* ── STATE ── */
+let S={
+  done:load('done',{}),
+  skin:load('skin',{}),
+  photos:load('photos',{}),
+  prod:load('prod',null),
+  mask:load('mask',{}),   // {'2026-07-13':'bio_purple'}
+};
+if(!S.prod){
+  // seed from what the original file said you OWN
+  const owned=['rice','toner','vitc','ha','barrier','spf','balm','cleanse','pads','snail','tret','minoxam','minoxpm','stamp'];
+  S.prod={};
+  CATALOG.forEach(p=>{ S.prod[p.id]={state: owned.includes(p.id)?'own':'want', opened:null}; });
+  save('prod',S.prod);
+}
+// migrate: any new catalog item defaults to want
+CATALOG.forEach(p=>{ if(!S.prod[p.id]) S.prod[p.id]={state:'want',opened:null}; });
+
+const P=id=>CATALOG.find(x=>x.id===id);
+const st=id=>S.prod[id].state;
+const has=id=>st(id)==='own';
+const daysLeft=id=>{
+  const p=P(id), s=S.prod[id];
+  if(!s.opened||!p.life) return null;
+  const used=Math.floor((TODAY-new Date(s.opened+'T00:00:00'))/86400000);
+  return p.life-used;
+};
+const reorderAt=id=>P(id).kr?14:7;
+const isLow=id=>{const d=daysLeft(id); return d!==null&&d<=reorderAt(id);};
+
+/* ── SCHEDULE ── */
+const nightType=d=>d===0?'stamp':(d===2||d===5)?'tret':'plain';
+const minoxPaused=d=>({am:d===1, pm:d===0});
+const padsOK=d=>nightType(d)==='plain';
+const browWeek=()=>Math.max(1,Math.floor(Math.floor((TODAY-new Date(BROW_START+'T00:00:00'))/86400000)/7)+1);
+
+function buildAM(d){
+  const mp=minoxPaused(d), out=[];
+  const add=(id,over)=>{const p=P(id);out.push({...p,...over,st:st(id)});};
+  add('rice'); add('toner'); add('vitc'); add('ha');
+  add('rejuran',{note:'Use it 2–3× a week. Today is a fine day for it.'});
+  add('eye'); add('barrier'); add('spf');
+  if(mp.am) add('minoxam',{off:true,n:'Minoxidil — paused',note:'Skip this morning. You stamped last night and the skin barrier is still open — minox will sting and irritate. Resume tonight.'});
+  else add('minoxam');
+  return out;
+}
+function buildPM(d){
+  const t=nightType(d), mp=minoxPaused(d), out=[];
+  const add=(id,over)=>{const p=P(id);out.push({...p,...over,st:st(id)});};
+  add('balm'); add('cleanse');
+  if(padsOK(d)) add('pads',{note:'Allowed tonight — no actives scheduled. Cap it at 3× a week.'});
+  else add('pads',{off:true,n:'Exfoliating Pads — skip',cau:true,note:t==='tret'?'Not tonight. Dermatica already has three actives. An exfoliant on top is over-processing, and the flake you get is barrier damage, not turnover.':'Not tonight. You are stamping. Open skin plus acids is chemical-burn territory.'});
+  add('toner',{note:'Rebalances pH after cleansing. Preps for what comes next.'});
+  add('snail');
+  add('anr');
+  if(t==='tret') add('tret');
+  if(t==='stamp') add('stamp');
+  add('eye',{note:'After the actives have absorbed. This covers the orbital zone you keep tret away from.'});
+  add('barrier',{note:t==='plain'?'Final step, every night.':'Critical tonight. Ceramide barrier creams measurably cut irritation from actives.'});
+  if(mp.pm) add('minoxpm',{off:true,n:'Minoxidil — paused',note:'Skip tonight. You just stamped. Resume Monday night.'});
+  else add('minoxpm');
+  return out;
+}
+// only render steps you actually own; want-items render as ghosts you can't check
+const renderable=arr=>arr.filter(s=>s.st!=='want'||s.slot==='weekly'?true:true);
+
+/* ── RENDER: WEEK ── */
+let view='pm';
+let selDate=new Date(TODAY);           // which day is open
+let wkOffset=0;                        // 0 = this week, -1 = last week...
+document.getElementById('hd').innerHTML=DN[DOW]+'<br>'+MN[TODAY.getMonth()]+' '+TODAY.getDate();
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1700);}
+const getDone=(k,p)=>(S.done[k]&&S.done[k][p])||[];
+function tog(k,p,i){
+  if(!S.done[k])S.done[k]={am:[],pm:[]};
+  if(!S.done[k][p])S.done[k][p]=[];
+  const a=S.done[k][p], x=a.indexOf(i);
+  if(x>-1)a.splice(x,1); else a.push(i);
+  save('done',S.done);
+  renderAll();
+}
+function activeCount(steps){return steps.filter(s=>!s.off&&s.st==='own').length;}
+
+// Sunday that starts the displayed week
+function weekStart(){
+  const d=new Date(TODAY);
+  d.setDate(d.getDate()-DOW+(wkOffset*7));
+  d.setHours(0,0,0,0);
+  return d;
+}
+function shiftWeek(n){
+  wkOffset+=n;
+  if(wkOffset>0)wkOffset=0;              // no future weeks
+  const ws=weekStart();
+  // keep the same weekday selected
+  const dow=selDate.getDay();
+  const nd=new Date(ws); nd.setDate(ws.getDate()+dow);
+  selDate = nd>TODAY ? new Date(TODAY) : nd;
+  renderAll();
+}
+function pickDay(i){
+  const d=new Date(weekStart()); d.setDate(d.getDate()+i);
+  if(d>TODAY) return;                    // can't log the future
+  selDate=d; renderAll();
+}
+function thisWeek(){wkOffset=0;selDate=new Date(TODAY);renderAll();}
+
+function renderWeek(){
+  const ws=weekStart();
+  const sd=selDate, sk=key(sd), sdow=sd.getDay();
+  const t=nightType(sdow);
+  const isToday=sk===TKEY;
+  const steps=view==='am'?buildAM(sdow):buildPM(sdow);
+  const done=getDone(sk,view);
+  const act=activeCount(steps);
+  const dc=done.filter(i=>steps[i]&&!steps[i].off&&steps[i].st==='own').length;
+  const pct=act?Math.round(dc/act*100):0;
+
+  let h='';
+
+  /* ── week nav ── */
+  const we=new Date(ws); we.setDate(ws.getDate()+6);
+  const rangeLbl=MN[ws.getMonth()].slice(0,3)+' '+ws.getDate()+' — '+MN[we.getMonth()].slice(0,3)+' '+we.getDate();
+  h+='<div class="wknav"><button onclick="shiftWeek(-1)">‹</button><div class="wl"><b>'+(wkOffset===0?'This week':wkOffset===-1?'Last week':Math.abs(wkOffset)+' weeks ago')+'</b>'+rangeLbl;
+  if(wkOffset!==0)h+='<br><button class="wkback" onclick="thisWeek()">↩ back to today</button>';
+  h+='</div><button onclick="shiftWeek(1)"'+(wkOffset===0?' style="opacity:.25;cursor:default"':'')+'>›</button></div>';
+
+  /* ── day tabs ── */
+  h+='<div class="daytabs">';
+  for(let i=0;i<7;i++){
+    const d=new Date(ws); d.setDate(ws.getDate()+i);
+    const k=key(d), nt=nightType(i), fut=d>TODAY;
+    const sc=dayScore(k);
+    let c='dt '+nt;
+    if(k===sk)c+=' sel';
+    if(k===TKEY)c+=' now';
+    if(fut)c+=' fut';
+    h+='<div class="'+c+'" onclick="pickDay('+i+')">';
+    if(sc==='full')h+='<span class="ck full">●</span>';
+    else if(sc==='part')h+='<span class="ck part">●</span>';
+    h+='<div class="dd">'+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][i]+'</div>';
+    h+='<div class="dn">'+d.getDate()+'</div>';
+    h+='<div class="dm"></div></div>';
+  }
+  h+='</div>';
+  h+='<div class="wkkey">';
+  h+='<div class="wkk"><div class="wkkd" style="background:var(--plum)"></div>Tretinoin</div>';
+  h+='<div class="wkk"><div class="wkkd" style="background:var(--rose)"></div>Stamp</div>';
+  h+='<div class="wkk"><div class="wkkd" style="background:var(--line2)"></div>Quiet</div>';
+  h+='<div class="wkk"><span style="color:var(--moss)">●</span>Done</div>';
+  h+='<div class="wkk"><span style="color:var(--gold)">●</span>Partial</div>';
+  h+='</div>';
+
+  /* ── hero for the selected day ── */
+  const title=t==='tret'?'Tretinoin night':t==='stamp'?'Derma stamp night':'Quiet night';
+  const sub=t==='tret'?'Dermatica goes on. No pads. Wait 10–15 min before the barrier cream.'
+       :t==='stamp'?'0.5mm, brows only. No tret, no pads, no minoxidil until Monday night.'
+       :'No actives. Pads are allowed, and the mask slot is open.';
+  const when=isToday?'Today':DN[sdow]+' · '+MN[sd.getMonth()].slice(0,3)+' '+sd.getDate();
+
+  h+='<div class="hero '+t+'"><div class="eb">'+when+'</div><h2>'+title+'</h2><div class="sb">'+sub+'</div>';
+  const c=2*Math.PI*20;
+  h+='<svg class="ring" width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="4"/><circle cx="25" cy="25" r="20" fill="none" stroke="#f0e9e0" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+(c-c*pct/100)+'" transform="rotate(-90 25 25)"/><text x="25" y="29" text-anchor="middle" fill="#f0e9e0" font-size="10" font-family="DM Mono">'+pct+'</text></svg></div>';
+
+  /* ── flags ── */
+  const F=[];
+  if(t==='tret')F.push({c:'rx',i:'℞',t:'<b>Dermatica.</b> Tret + azelaic + tranexamic in one step. Pads stay in the drawer.'});
+  if(t==='stamp')F.push({c:'warn',i:'⚠',t:'<b>Stamp night.</b> Disinfect with 70% iso and let it dry. Minoxidil is off tonight and tomorrow morning.'});
+  if(sdow===1)F.push({c:'warn',i:'⚠',t:'<b>Minoxidil off this morning.</b> 24hr window after Sunday\'s stamp. Resume tonight.'});
+  if(isToday)F.push({c:'info',i:'◆',t:'<b>Brow protocol · week '+browWeek()+'.</b> Started June 1. Checkpoints at months 1, 3, 6.'});
+  CATALOG.filter(p=>has(p.id)&&isLow(p.id)).forEach(p=>{
+    const d=daysLeft(p.id);
+    F.push({c:'warn',i:'⚠',t:'<b>'+p.n+'</b> — '+(d<=0?'out now':'about '+d+' days left')+'. '+(p.kr?'Korean, order today, 2 week lead.':'Reorder soon.')});
+  });
+  const missing=steps.filter(s=>s.st==='want'&&!s.off);
+  if(missing.length)F.push({c:'buy',i:'○',t:'<b>'+missing.length+' step'+(missing.length>1?'s':'')+' you don\'t own.</b> Greyed below. Flip them on the Shelf tab when they land.'});
+  if(F.length){
+    h+='<div class="flags">';
+    F.forEach(f=>h+='<div class="flag '+f.c+'"><span class="ic">'+f.i+'</span><div>'+f.t+'</div></div>');
+    h+='</div>';
+  }
+
+  /* ── AM/PM ── */
+  h+='<div class="seg"><button class="'+(view==='am'?'on am':'')+'" onclick="setV(\'am\')">☀ Morning</button><button class="'+(view==='pm'?'on pm':'')+'" onclick="setV(\'pm\')">☾ Evening</button></div>';
+
+  h+='<div class="steps">';
+  steps.forEach((s,i)=>{
+    const ghost=s.st==='want', outv=s.st==='out';
+    const dis=s.off||ghost||outv;
+    const isd=done.includes(i);
+    h+='<div class="step'+(isd?' done':'')+(dis?' off':'')+'"'+(dis?'':' onclick="tog(\''+sk+'\',\''+view+'\','+i+')"')+'>';
+    h+='<div class="chk">✓</div><div>';
+    h+='<div class="sn">'+s.n+'</div><div class="sp">'+s.b+'</div>';
+    h+='<div class="st'+(s.cau?' cau':'')+'">'+(s.note||s.why)+'</div>';
+    const tg=[];
+    if(s.rx)tg.push('<span class="tag rx">Rx</span>');
+    if(s.brow)tg.push('<span class="tag brow">Brow</span>');
+    if(ghost)tg.push('<span class="tag want">Don\'t own</span>');
+    if(outv)tg.push('<span class="tag out">Out — reorder</span>');
+    if(s.st==='own'&&isLow(s.id))tg.push('<span class="tag low">'+(daysLeft(s.id)<=0?'Empty':daysLeft(s.id)+'d left')+'</span>');
+    if(tg.length)h+='<div class="tags">'+tg.join('')+'</div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+
+  /* ── mask slot: quiet nights only ── */
+  if(view==='pm'&&t==='plain'){
+    const om=CATALOG.filter(p=>p.slot==='weekly'&&has(p.id));
+    h+='<div class="lbl">Mask slot · this night is open</div>';
+    if(!om.length){
+      h+='<div class="empty">No Biodance masks on the shelf.<br>All five are on the Shelf tab with what each one does.</div>';
+    } else {
+      h+='<div class="card"><div class="cs" style="margin-bottom:10px">3–4 hrs or overnight · after toner, in place of serums</div>';
+      om.forEach(p=>{
+        const on=S.mask[sk]===p.id;
+        h+='<div class="prod'+(on?' own':'')+'" style="border-left-color:'+p.mask+';margin-bottom:6px;cursor:pointer" onclick="useMask(\''+sk+'\',\''+p.id+'\')">';
+        h+='<div class="prow"><div><div class="pn">'+p.n+'</div><div class="pb" style="color:'+p.mask+'">'+p.b+'</div></div>';
+        h+='<div class="dleft" style="color:'+(on?'var(--moss)':'var(--dim)')+'">'+(on?'✓ used':'tap')+'</div></div>';
+        h+='<div class="pm2">'+p.why+'</div></div>';
+      });
+      h+='</div>';
+    }
+  }
+
+  /* ── rate ── */
+  if(view==='pm'&&pct===100&&act>0){
+    h+='<div class="lbl">How does the skin feel?</div>'+rateBlock(sk);
+  }
+
+  document.getElementById('week').innerHTML=h;
+}
+function setV(v){view=v;renderWeek();}
+function useMask(k,id){
+  S.mask[k]=S.mask[k]===id?null:id;
+  save('mask',S.mask);renderWeek();
+}
+
+/* ── STREAK ── */
+function dayScore(k){
+  const d=S.done[k]; if(!d)return null;
+  const dw=new Date(k+'T00:00:00').getDay();
+  const need=activeCount(buildAM(dw))+activeCount(buildPM(dw));
+  const got=(d.am||[]).length+(d.pm||[]).length;
+  if(got===0)return null;
+  if(got>=need)return 'full';
+  if(got>=need*0.5)return 'part';
+  return 'none';
+}
+function streakN(){
+  let n=0,d=new Date(TODAY);
+  if(dayScore(key(d))!=='full')d.setDate(d.getDate()-1);
+  while(dayScore(key(d))==='full'){n++;d.setDate(d.getDate()-1);}
+  return n;
+}
+function renderStreak(){
+  const ks=Object.keys(S.done);
+  const full=ks.filter(k=>dayScore(k)==='full').length;
+  const tretN=ks.filter(k=>{
+    const dw=new Date(k+'T00:00:00').getDay();
+    if(dw!==2&&dw!==5)return false;
+    const i=buildPM(dw).findIndex(s=>s.id==='tret');
+    return i>-1&&(S.done[k].pm||[]).includes(i);
+  }).length;
+
+  let h='';
+  h+='<div class="stats"><div class="stat"><div class="v">'+streakN()+'</div><div class="l">Day streak</div></div>';
+  h+='<div class="stat"><div class="v">'+full+'</div><div class="l">Full days</div></div>';
+  h+='<div class="stat"><div class="v">'+tretN+'</div><div class="l">Tret nights</div></div></div>';
+
+  h+='<div class="card"><h3>Last nine weeks</h3><div class="cs">Updates the moment you tap a step</div><div class="heat">';
+  ['S','M','T','W','T','F','S'].forEach(d=>h+='<div class="hl">'+d+'</div>');
+  const s0=new Date(TODAY); s0.setDate(s0.getDate()-56-DOW);
+  for(let i=0;i<63;i++){
+    const d=new Date(s0); d.setDate(s0.getDate()+i);
+    const k=key(d), fut=d>TODAY, sc=dayScore(k);
+    let c=fut?'fut':sc==='full'?'full':sc==='part'?'part':sc==='none'?'none':'';
+    if(k===TKEY)c+=' now';
+    h+='<div class="hc '+c+'">'+d.getDate()+'</div>';
+  }
+  h+='</div><div class="legend">';
+  h+='<div class="lg"><div class="lgd" style="background:var(--moss)"></div>Full</div>';
+  h+='<div class="lg"><div class="lgd" style="background:var(--gold)"></div>Partial</div>';
+  h+='<div class="lg"><div class="lgd" style="background:#3a2f2c"></div>Barely</div>';
+  h+='<div class="lg"><div class="lgd" style="background:var(--surf2)"></div>Untouched</div>';
+  h+='</div></div>';
+
+  h+='<div class="note"><strong>Nothing here autofills</strong>A day only goes green when you have tapped every step you own for that day. You can go back and fill in any day you missed — the Week tab scrolls back through past weeks. Half or more is gold. Less is grey. Tap nothing and it stays blank — an honest gap is more useful than a flattering one.</div>';
+  h+='<div class="note"><strong>Why the chain matters</strong>Tretinoin and minoxidil both run on cycles. Inconsistency <b>restarts</b> the clock, it does not just slow it. A skipped week costs you more than a week.</div>';
+  document.getElementById('streak').innerHTML=h;
+}
+
+/* ── SKIN ── */
+function rateBlock(k){
+  const c=S.skin[k];
+  let h='<div class="card"><div class="rate">';
+  for(let i=1;i<=5;i++)h+='<button class="'+(c===i?'on':'')+'" onclick="rate(\''+k+'\','+i+')">'+i+'</button>';
+  h+='</div><div class="rlb"><span>Calm</span><span>Angry</span></div></div>';
+  return h;
+}
+function rate(k,v){
+  if(S.skin[k]===v)delete S.skin[k]; else S.skin[k]=v;
+  save('skin',S.skin);renderAll();
+}
+function renderSkin(){
+  let h='<div class="lbl">Today · '+MN[TODAY.getMonth()]+' '+TODAY.getDate()+'</div>'+rateBlock(TKEY);
+  const ks=Object.keys(S.skin).sort().reverse().slice(0,30);
+  h+='<div class="card"><h3>Recent history</h3><div class="cs">Flare-ups lined up against what you did that night</div>';
+  if(!ks.length)h+='<div class="empty">Nothing logged yet.<br>Rate the skin after tonight and this fills in.</div>';
+  else ks.forEach(k=>{
+    const v=S.skin[k], dt=new Date(k+'T00:00:00'), nt=nightType(dt.getDay());
+    const col=v<=2?'#7d9a72':v===3?'#e0b96a':v===4?'#d9a05b':'#c85a4e';
+    const mk=S.mask[k];
+    h+='<div class="row"><span class="rd">'+MN[dt.getMonth()].slice(0,3)+' '+dt.getDate()+'</span>';
+    h+='<div class="rb"><div class="rf" style="width:'+(v*20)+'%;background:'+col+'"></div></div>';
+    h+='<span class="rt">'+(nt==='tret'?'tret':nt==='stamp'?'stamp':mk?'mask':'—')+'</span></div>';
+  });
+  h+='</div>';
+
+  const tv=[],pv=[];
+  Object.keys(S.skin).forEach(k=>{
+    const nt=nightType(new Date(k+'T00:00:00').getDay());
+    if(nt==='tret')tv.push(S.skin[k]); else if(nt==='plain')pv.push(S.skin[k]);
+  });
+  if(tv.length>=3&&pv.length>=3){
+    const avg=a=>(a.reduce((x,y)=>x+y,0)/a.length).toFixed(1);
+    const gap=(avg(tv)-avg(pv)).toFixed(1);
+    h+='<div class="note"><strong>The pattern so far</strong>Tret nights average <b>'+avg(tv)+'</b>. Quiet nights average <b>'+avg(pv)+'</b>. Gap: <b>'+gap+'</b>. '+(gap>1.5?'That is too wide. The tret is running hot — buffer with snail mucin, or drop to one night a week and rebuild.':'That is a normal gap. The tret is working without wrecking the barrier.')+'</div>';
+  }
+  h+='<div class="note"><strong>What a 4 or 5 actually means</strong>Stinging, flaking, tightness, or a burn that outlasts 20 minutes. That is barrier damage, not the tret working. Pull the actives for 3–4 nights, barrier cream twice a day, then restart at half frequency. The Caviar PDRN mask is your rescue here.</div>';
+  document.getElementById('skin').innerHTML=h;
+}
+
+/* ── SHELF ── */
+let filt='all';
+function setFilt(f){filt=f;renderShelf();}
+function setState(id,s){
+  const cur=S.prod[id];
+  cur.state=cur.state===s?'want':s;
+  if(cur.state!=='own')cur.opened=null;
+  save('prod',S.prod);renderAll();
+  toast(P(id).n+' → '+cur.state);
+}
+function openNow(id){
+  const c=S.prod[id];
+  c.opened=c.opened?null:TKEY;
+  c.state='own';
+  save('prod',S.prod);renderAll();
+  toast(c.opened?P(id).n+' opened today':'Reset');
+}
+function renderShelf(){
+  const own=CATALOG.filter(p=>has(p.id)).length;
+  const want=CATALOG.filter(p=>st(p.id)==='want').length;
+  const out=CATALOG.filter(p=>st(p.id)==='out').length;
+  const low=CATALOG.filter(p=>has(p.id)&&isLow(p.id)).length;
+
+  let h='';
+  h+='<div class="stats"><div class="stat"><div class="v" style="color:var(--moss)">'+own+'</div><div class="l">On shelf</div></div>';
+  h+='<div class="stat"><div class="v" style="color:var(--amber)">'+(low+out)+'</div><div class="l">Reorder</div></div>';
+  h+='<div class="stat"><div class="v" style="color:var(--red)">'+want+'</div><div class="l">Wishlist</div></div></div>';
+
+  h+='<div class="filt">';
+  [['all','Everything'],['own','On shelf'],['reorder','Reorder'],['want','Wishlist'],['am','Morning'],['pm','Evening'],['weekly','Masks']].forEach(f=>{
+    h+='<button class="'+(filt===f[0]?'on':'')+'" onclick="setFilt(\''+f[0]+'\')">'+f[1]+'</button>';
+  });
+  h+='</div>';
+
+  let list=CATALOG.filter(p=>{
+    if(filt==='all')return true;
+    if(filt==='own')return has(p.id);
+    if(filt==='want')return st(p.id)==='want';
+    if(filt==='reorder')return st(p.id)==='out'||(has(p.id)&&isLow(p.id));
+    if(filt==='weekly')return p.slot==='weekly';
+    return p.slot===filt||p.slot==='both';
+  });
+  // sort: out first, then low, then own, then want
+  list.sort((a,b)=>{
+    const r=x=>st(x.id)==='out'?0:(has(x.id)&&isLow(x.id))?1:has(x.id)?2:3;
+    return r(a)-r(b);
+  });
+
+  if(!list.length)h+='<div class="empty">Nothing here.</div>';
+  list.forEach(p=>{
+    const s=S.prod[p.id], d=daysLeft(p.id);
+    let dc='dleft', dt2;
+    if(s.state==='out'){dc+=' out';dt2='out';}
+    else if(s.state==='want'){dc+=' un';dt2='not owned';}
+    else if(d===null){dc+=' un';dt2='unopened';}
+    else if(d<=0){dc+=' out';dt2='empty';}
+    else if(d<=reorderAt(p.id)){dc+=' lo';dt2=d+'d left';}
+    else{dt2=d+'d left';}
+
+    h+='<div class="prod '+s.state+'"'+(p.mask?' style="border-left-color:'+p.mask+'"':'')+'>';
+    h+='<div class="prow"><div style="flex:1"><div class="pn">'+p.n+'</div>';
+    h+='<div class="pb"'+(p.mask?' style="color:'+p.mask+'"':'')+'>'+p.b+'</div></div>';
+    h+='<div class="'+dc+'">'+dt2+'</div></div>';
+    h+='<div class="pm2">'+p.why+'</div>';
+    if(p.life&&s.state==='own'&&d!==null){
+      const pctf=Math.max(0,Math.min(100,d/p.life*100));
+      const bc=d<=0?'var(--red)':d<=reorderAt(p.id)?'var(--amber)':'var(--moss)';
+      h+='<div class="bar"><div class="barf" style="width:'+pctf+'%;background:'+bc+'"></div></div>';
+    }
+    h+='<div class="pctl">';
+    h+='<button class="pbtn'+(s.state==='own'?' act':'')+'" onclick="setState(\''+p.id+'\',\'own\')">Own it</button>';
+    h+='<button class="pbtn'+(s.state==='out'?' act a':'')+'" onclick="setState(\''+p.id+'\',\'out\')">Ran out</button>';
+    h+='<button class="pbtn'+(s.state==='want'?' act r':'')+'" onclick="setState(\''+p.id+'\',\'want\')">Want it</button>';
+    if(s.state==='own'&&p.life)h+='<button class="pbtn" onclick="openNow(\''+p.id+'\')">'+(s.opened?'Reset date':'Opened today')+'</button>';
+    if(p.buy)h+='<span class="pbtn" style="cursor:default;opacity:.6">'+p.buy+'</span>';
+    h+='</div></div>';
+  });
+
+  h+='<div class="note"><strong>How the countdowns work</strong>Hit <b>Opened today</b> the day you crack a new bottle. Korean products flag 14 days out because YesStyle and Olive Young take about two weeks door to door. Everything else flags at 7. A gap in tretinoin or minoxidil is a restart, not a pause — never run to zero.</div>';
+  h+='<div class="note"><strong>Wishlist drives the routine</strong>Anything marked <b>Want it</b> shows up greyed on the Tonight screen so you can see the hole in the routine. The second you mark it Own it, it goes live and starts counting toward your streak.</div>';
+  document.getElementById('shelf').innerHTML=h;
+}
+
+/* ── PHOTOS ── */
+let pmn=mkey(TODAY), pslot=null;
+function shiftM(n){const[y,m]=pmn.split('-').map(Number);pmn=mkey(new Date(y,m-1+n,1));renderPhotos();}
+function renderPhotos(){
+  const[y,m]=pmn.split('-').map(Number);
+  const p=S.photos[pmn]||{};
+  const cnt=Object.keys(S.photos).length;
+  let h='<div class="card"><div class="mn"><button onclick="shiftM(-1)">‹</button><span>'+MN[m-1]+' '+y+'</span><button onclick="shiftM(1)">›</button></div>';
+  h+='<div class="cs" style="margin-bottom:4px">Same light, same spot, no expression</div><div class="pg">';
+  ['front','left','right'].forEach(sl=>{
+    const v=p[sl];
+    h+='<div class="ps'+(v?' has':'')+'" onclick="pick(\''+sl+'\')">';
+    h+=v?'<img src="'+v+'">':'<div class="pp">+</div><div class="pl">'+sl+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  if(Object.keys(p).length)h+='<button class="pbtn" style="margin-top:10px;width:100%;padding:9px" onclick="clrM()">Clear this month</button>';
+  h+='</div>';
+
+  const ms=Object.keys(S.photos).sort();
+  if(ms.length>=2){
+    const a=ms[0],b=ms[ms.length-1];
+    h+='<div class="card"><h3>Then and now</h3><div class="cs">'+a+' vs '+b+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    [a,b].forEach(k=>{const s=(S.photos[k]||{}).front;h+='<div class="ps has" style="cursor:default">'+(s?'<img src="'+s+'">':'<div class="pl">no front shot</div>')+'</div>';});
+    h+='</div></div>';
+  }
+  h+='<div class="note"><strong>Storage</strong>'+cnt+' month'+(cnt===1?'':'s')+' saved. Each photo compresses to roughly 180KB. Past eight months this gets tight — clear old months once you have saved them elsewhere.</div>';
+  h+='<div class="note"><strong>Why monthly, not weekly</strong>Skin turnover runs 28 days. Weekly photos show you noise. Monthly photos show you the trend. Same lighting or the comparison is worthless.</div>';
+  document.getElementById('photos').innerHTML=h;
+}
+function pick(s){pslot=s;document.getElementById('pf').click();}
+document.getElementById('pf').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const im=new Image();
+    im.onload=()=>{
+      const M=900; let w=im.width,ht=im.height;
+      if(w>ht&&w>M){ht=ht*M/w;w=M;} else if(ht>M){w=w*M/ht;ht=M;}
+      const c=document.createElement('canvas');c.width=w;c.height=ht;
+      c.getContext('2d').drawImage(im,0,0,w,ht);
+      const data=c.toDataURL('image/jpeg',0.72);
+      if(!S.photos[pmn])S.photos[pmn]={};
+      S.photos[pmn][pslot]=data;
+      if(save('photos',S.photos))toast(pslot+' saved');
+      else{delete S.photos[pmn][pslot];toast('Storage full — clear an old month');}
+      renderPhotos();
+    };
+    im.src=ev.target.result;
+  };
+  r.readAsDataURL(f); e.target.value='';
+});
+function clrM(){delete S.photos[pmn];save('photos',S.photos);renderPhotos();toast('Month cleared');}
+
+/* ── RULES ── */
+function renderRef(){
+  let h='<div class="lbl">The week</div><div class="card">';
+  [['Sun','Derma stamp 0.5mm · no tret · no pads · minox off PM'],
+   ['Mon','Standard · minox off AM only'],
+   ['Tue','Tretinoin · no pads'],
+   ['Wed','Standard · pads and mask allowed'],
+   ['Thu','Standard · pads and mask allowed'],
+   ['Fri','Tretinoin · no pads'],
+   ['Sat','Standard · pads and mask allowed']].forEach(r=>{
+    h+='<div class="row"><span class="rd" style="width:34px;color:var(--txt);font-weight:500">'+r[0]+'</span><span style="font-size:.6rem;color:var(--mid);line-height:1.5">'+r[1]+'</span></div>';
+  });
+  h+='</div>';
+
+  h+='<div class="lbl">Morning · full order</div><div class="card">';
+  buildAM(3).forEach((s,i)=>{
+    h+='<div class="row"><span class="rd" style="width:18px">'+(i+1)+'</span><div style="flex:1"><div style="font-size:.72rem;font-weight:500'+(s.st==='want'?';opacity:.5':'')+'">'+s.n+(s.st==='want'?' · not owned':'')+'</div><div style="font-size:.52rem;color:var(--amber);letter-spacing:.06em;text-transform:uppercase">'+s.b+'</div></div></div>';
+  });
+  h+='</div>';
+
+  h+='<div class="lbl">Evening · full order</div><div class="card">';
+  buildPM(2).forEach((s,i)=>{
+    h+='<div class="row"><span class="rd" style="width:18px">'+(i+1)+'</span><div style="flex:1"><div style="font-size:.72rem;font-weight:500'+(s.st==='want'?';opacity:.5':'')+'">'+s.n+(s.st==='want'?' · not owned':'')+'</div><div style="font-size:.52rem;color:var(--amber);letter-spacing:.06em;text-transform:uppercase">'+s.b+'</div></div></div>';
+  });
+  h+='<div style="font-size:.55rem;color:var(--dim);margin-top:10px;line-height:1.7">Shown as a tretinoin night — the fullest version. On a quiet night the Dermatica step drops out and the pads come back in.</div></div>';
+
+  h+='<div class="lbl">Rules that do not bend</div>';
+  [['Never tret and stamp the same night','Freshly stamped skin has open microchannels. A retinoid walks straight past the barrier. That is a chemical burn, not a stronger result.'],
+   ['Pads come off on any active night','Dermatica already carries three actives. An exfoliant on top is over-processing, and the flake you get is barrier damage, not turnover.'],
+   ['Minoxidil pauses 24hr around the stamp','Same reason. Sunday night and Monday morning are skipped. Resume Monday night.'],
+   ['Vitamin C is AM only','It is an antioxidant. It works alongside daylight and SPF. At night with tretinoin it is redundant and irritating.'],
+   ['Rejuran — pick a slot and hold it','2–3× a week. AM is the cleaner slot since tret owns your evenings. Do not alternate randomly.'],
+   ['Masks go on quiet nights only','After toner, in place of serums. 3–4 hrs or overnight — it goes clear when it is finished. Never on a tret or stamp night.'],
+   ['Thin to thick, always','Water-based before oil-based. Actives before moisturizer. SPF last in the morning, nothing over it.'],
+   ['Consistency beats dose','Tret and minox both work on cycles. Skipping restarts the clock. A small dose every day beats a large dose sometimes.']].forEach(n=>{
+    h+='<div class="note"><strong>'+n[0]+'</strong>'+n[1]+'</div>';
+  });
+  document.getElementById('ref').innerHTML=h;
+}
+
+/* ── THE FIX: re-render everything, every time ── */
+function renderAll(){renderWeek();renderStreak();renderSkin();renderShelf();renderPhotos();renderRef();}
+
+document.querySelectorAll('nav button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById(b.dataset.t).classList.add('on');
+    renderAll();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+renderAll();
+</script>
+</body>
+</html>
